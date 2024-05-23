@@ -7,7 +7,7 @@ services:
     build:
       context: ./architecture/spark
       dockerfile: Dockerfile
-    image: spark-image 
+    image: spark-image
     container_name: spark-master
     hostname: spark-master
     command: bash -c "sbin/start-master.sh -p 7077"
@@ -25,6 +25,7 @@ services:
       - 8080:8080
     volumes:
       - spark-logs:/opt/spark/spark-events
+      - ./architecture/spark/conf/spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf
     depends_on:
       - hive-metastore
     networks:
@@ -74,15 +75,15 @@ services:
       - 10000:10000
       - 10002:10002
     command: bash -c "
-      sleep 10 && sbin/start-thriftserver.sh 
-                --driver-java-options '-Dhive.metastore.uris=thrift://hive-metastore:9083' 
+      sleep 10 && sbin/start-thriftserver.sh
+                --driver-java-options '-Dhive.metastore.uris=thrift://hive-metastore:9083'
                 --master spark://spark-master:7077
                 --executor-cores 1
                 --executor-memory 2G
                 --total-executor-cores 1"
     depends_on:
       - spark-master
-      - hive-metastore   
+      - hive-metastore
     networks:
       - data-network
 
@@ -126,7 +127,7 @@ services:
     build:
       context: ./architecture/hive
       dockerfile: Dockerfile
-    image: hive-image 
+    image: hive-image
     container_name: hive-metastore
     hostname: hive-metastore
     environment:
@@ -167,13 +168,13 @@ services:
     depends_on:
       - minio
     entrypoint: >
-      /bin/sh -c " /usr/bin/mc config host add myminio http://minio:9000 minio minio123; 
-                   /usr/bin/mc rm -r --force myminio/tpch; 
-                   /usr/bin/mc mb myminio/tpch; 
-                   /usr/bin/mc policy download myminio/tpch; 
-                   /usr/bin/mc rm -r --force myminio/rainforest; 
-                   /usr/bin/mc mb myminio/rainforest; 
-                   /usr/bin/mc policy download myminio/rainforest; 
+      /bin/sh -c " /usr/bin/mc config host add myminio http://minio:9000 minio minio123;
+                   /usr/bin/mc rm -r --force myminio/tpch;
+                   /usr/bin/mc mb myminio/tpch;
+                   /usr/bin/mc policy download myminio/tpch;
+                   /usr/bin/mc rm -r --force myminio/rainforest;
+                   /usr/bin/mc mb myminio/rainforest;
+                   /usr/bin/mc policy download myminio/rainforest;
                    exit 0; "
     networks:
       - data-network
@@ -198,8 +199,8 @@ services:
 
   hue-server:
     image: gethue/hue:latest
-    hostname: hue
-    container_name: hue
+    hostname: hue-server
+    container_name: hue-server
     # profiles: ["query"]
     ports:
       - 8800:8888
@@ -214,6 +215,7 @@ services:
   hue-db:
     image: mysql:5.7
     hostname: hue-db
+    container_name: hue-db
     # profiles: ["query"]
     ports:
       - 33061:3306
@@ -233,7 +235,10 @@ services:
 ## Visualization ##
 
   metabase:
-    image: metabase/metabase:latest
+    image: metabase-image
+    build:
+      context: ./architecture/metabase
+      dockerfile: Dockerfile
     container_name: metabase
     hostname: metabase
     # profiles: ["visualization"]

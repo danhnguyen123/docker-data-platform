@@ -3,7 +3,12 @@ FROM bitnami/spark:3.3
 USER root
 
 # Install prerequisites
-RUN apt-get update && apt-get install -y curl
+RUN apt-get update && apt-get install -y curl make gcc
+
+RUN apt-get install -y --no-install-recommends \
+    rsync && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # ENV SPARK_HOME /opt/bitnami/spark
 # ENV SPARK_CONF_DIR="$SPARK_HOME/conf"
@@ -23,6 +28,11 @@ RUN curl -O https://repo1.maven.org/maven2/software/amazon/awssdk/s3/2.18.41/s3-
 
 # Create and event logging directory to store job logs
 RUN mkdir /tmp/spark-events
+
+# RUN mkdir /opt/bitnami/spark/assets
+COPY ./setup.sql ./
+COPY ./count.sql ./
+COPY ./tpch-dbgen ./tpch-dbgen/
 
 RUN chmod u+x /opt/bitnami/spark/sbin/* && \
     chmod u+x /opt/bitnami/spark/bin/*
