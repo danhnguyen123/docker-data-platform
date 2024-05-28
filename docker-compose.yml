@@ -44,6 +44,8 @@ services:
       - SPARK_SSL_ENABLED=no
     env_file:
       - ./architecture/spark/.env.spark
+    volumes:
+      - ./architecture/spark/conf/spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf
     depends_on:
       - spark-master
     networks:
@@ -87,23 +89,23 @@ services:
     networks:
       - data-network
 
-  spark-notebook:
-    image: spark-notebook
-    build:
-      context: ./architecture/spark
-      dockerfile: ./jupyterlab.Dockerfile
-    container_name: spark-notebook
-    command: jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root --NotebookApp.token=123 --NotebookApp.password=123
-    volumes:
-      - ./workspace:/opt/workspace
-      - ./architecture/spark/conf/spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf
-    ports:
-      - 8888:8888
-      - 4042:4040
-    depends_on:
-      - spark-master
-    networks:
-      - data-network
+  # spark-notebook:
+  #   image: spark-notebook
+  #   build:
+  #     context: ./architecture/spark
+  #     dockerfile: ./jupyterlab.Dockerfile
+  #   container_name: spark-notebook
+  #   command: jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root --NotebookApp.token=123 --NotebookApp.password=123
+  #   volumes:
+  #     - ./workspace:/opt/workspace
+  #     - ./architecture/spark/conf/spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf
+  #   ports:
+  #     - 8888:8888
+  #     - 4042:4040
+  #   depends_on:
+  #     - spark-master
+  #   networks:
+  #     - data-network
 
 ## Hive Metastore Service ##
 
@@ -185,7 +187,7 @@ services:
     container_name: trino
     image: "trinodb/trino"
     hostname: trino
-    # profiles: ["query"]
+    profiles: ["query"]
     ports:
       - 8000:8080
     volumes:
@@ -201,7 +203,7 @@ services:
     image: gethue/hue:latest
     hostname: hue-server
     container_name: hue-server
-    # profiles: ["query"]
+    profiles: ["query"]
     ports:
       - 8800:8888
     volumes:
@@ -216,7 +218,7 @@ services:
     image: mysql:5.7
     hostname: hue-db
     container_name: hue-db
-    # profiles: ["query"]
+    profiles: ["query"]
     ports:
       - 33061:3306
     command: --init-file /data/application/init.sql
@@ -241,7 +243,7 @@ services:
       dockerfile: Dockerfile
     container_name: metabase
     hostname: metabase
-    # profiles: ["visualization"]
+    profiles: ["visualization"]
     volumes:
     - metabase:/dev/random:ro
     ports:
@@ -268,7 +270,7 @@ services:
     image: postgres:15
     container_name: metabase-db
     hostname: metabase-db
-    # profiles: ["visualization"]
+    profiles: ["visualization"]
     environment:
       POSTGRES_USER: metabase
       POSTGRES_DB: metabaseappdb

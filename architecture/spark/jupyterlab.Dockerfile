@@ -13,9 +13,9 @@ RUN mkdir -p ${shared_workspace} && \
     pip3 install wget jupyterlab
 
 # install dependencies
-RUN pip install --upgrade pip
-COPY ./requirements.txt .
-RUN pip install -r requirements.txt
+# RUN pip install --upgrade pip
+# COPY ./requirements.txt .
+# RUN pip install -r requirements.txt
 
 # -- Runtime
 
