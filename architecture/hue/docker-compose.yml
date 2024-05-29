@@ -1,0 +1,42 @@
+version: "3"
+services:
+
+## SQL Editor ##
+  hue-server:
+    image: gethue/hue:latest
+    container_name: hue-server
+    hostname: hue-server
+    ports:
+      - 8800:8888
+    volumes:
+      - ./hue.ini:/usr/share/hue/desktop/conf/z-hue.ini
+    depends_on:
+      - hue-db
+    networks:
+      - data-network
+
+  hue-db:
+    image: mysql:5.7
+    hostname: hue-db
+    container_name: hue-db
+    ports:
+      - 33061:3306
+    command: --init-file /data/application/init.sql
+    volumes:
+      - hue-db:/var/lib/mysql
+      - ./init.sql:/data/application/init.sql
+    environment:
+      MYSQL_ROOT_USER: hueuser
+      MYSQL_ROOT_PASSWORD: huepassword
+      MYSQL_DATABASE: hue
+      MYSQL_USER: hueuser
+      MYSQL_PASSWORD: huepassword
+    networks:
+      - data-network
+
+volumes:
+  hue-db:
+
+networks:
+  data-network:
+    external: true

@@ -1,0 +1,48 @@
+version: "3"
+services:
+
+## Hive Metastore Service ##
+  metastore-db:
+    image: postgres:15
+    container_name: metastore-db
+    hostname: metastore-db
+    environment:
+      POSTGRES_DB: 'metastore_db'
+      POSTGRES_USER: 'hive'
+      POSTGRES_PASSWORD: 'password'
+    ports:
+      - 5430:5432
+    volumes:
+      - metastore-db:/var/lib/postgresql
+    restart: unless-stopped
+    networks:
+      - data-network
+
+  hive-metastore:
+    build:
+      context: ./architecture/hive
+      dockerfile: Dockerfile
+    image: hive-image
+    container_name: hive-metastore
+    hostname: hive-metastore
+    environment:
+      DB_DRIVER: postgres
+      SERVICE_NAME: 'metastore'
+      SERVICE_OPTS: '-Xmx1G'
+    ports:
+        - 9083:9083
+    volumes:
+        - warehouse:/opt/hive/data/warehouse
+    depends_on:
+      - metastore-db
+    restart: unless-stopped
+    networks:
+      - data-network
+
+volumes:
+  metastore-db:
+  warehouse:
+
+networks:
+  data-network:
+    external: true

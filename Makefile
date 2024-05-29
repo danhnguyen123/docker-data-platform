@@ -1,5 +1,39 @@
-up-build:
-	docker compose up --build -d --scale spark-worker=2
+init:
+	docker network create -d bridge data-network
+
+	cd ./architecture/minio
+	docker compose  up --build
+	cd ../..
+
+	cd ./architecture/hive
+	docker compose up --build
+	cd ../..
+
+up-build-spark:
+    cd ./architecture/spark
+	docker compose up -build -d --scale spark-worker=2
+	cd ../..
+
+up-build-airflow:
+    cd ./architecture/airflow
+	docker compose up --build -d
+	cd ../..
+
+up-build-trino:
+    cd ./architecture/trino
+	docker compose up --build -d
+	cd ../..
+
+up-build-hue:
+    cd ./architecture/hue
+	docker compose up --build -d
+	cd ../..
+
+up-build-metabase:
+    cd ./architecture/metabase
+	docker compose up --build -d
+	cd ../..
+
 
 setup: datagen create-tables
 

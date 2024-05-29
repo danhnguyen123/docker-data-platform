@@ -1,0 +1,16 @@
+requests
+psycopg2-binary
+psycopg2
+pandas
+pandas_gbq
+python-dotenv
+celery
+redis
+gspread
+flower
+celery-singleton
+sqlalchemy
+airflow-code-editor
+apache-airflow-providers-amazon
+apache-airflow-providers-apache-spark
+pyspark==3.3.4

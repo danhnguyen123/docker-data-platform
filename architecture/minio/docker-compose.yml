@@ -1,0 +1,43 @@
+version: "3"
+services:
+
+## Object Storage ##
+  minio:
+    image: minio/minio
+    container_name: minio
+    hostname: minio
+    ports:
+      - 9000:9000
+      - 9001:9001
+    environment:
+      MINIO_ACCESS_KEY: minio
+      MINIO_SECRET_KEY: minio123
+    command: server --console-address ":9001" /data
+    volumes:
+      - minio:/data
+    networks:
+      - data-network
+
+  createbuckets:
+    image: minio/mc
+    container_name: createbuckets
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c " /usr/bin/mc config host add myminio http://minio:9000 minio minio123;
+                   /usr/bin/mc rm -r --force myminio/tpch;
+                   /usr/bin/mc mb myminio/tpch;
+                   /usr/bin/mc policy download myminio/tpch;
+                   /usr/bin/mc rm -r --force myminio/rainforest;
+                   /usr/bin/mc mb myminio/rainforest;
+                   /usr/bin/mc policy download myminio/rainforest;
+                   exit 0; "
+    networks:
+      - data-network
+
+volumes:
+  minio:
+
+networks:
+  data-network:
+    external: true

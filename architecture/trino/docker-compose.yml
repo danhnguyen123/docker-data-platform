@@ -1,0 +1,18 @@
+version: "3"
+services:
+
+## Query Engine ##
+  trino:
+    image: trinodb/trino
+    container_name: trino
+    hostname: trino
+    ports:
+      - 8000:8080
+    volumes:
+      - ./catalog:/etc/trino/catalog
+    networks:
+      - data-network
+
+networks:
+  data-network:
+    external: true
