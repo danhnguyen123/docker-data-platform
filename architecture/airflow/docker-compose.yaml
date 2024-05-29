@@ -5,7 +5,6 @@ x-airflow-common:
   build:
     context: .
     dockerfile: Dockerfile
-  image: airflow-image
   env_file: ./.env.local
   extra_hosts:
     - "host.docker.internal:host-gateway"
@@ -37,17 +36,17 @@ x-airflow-common:
   user: "${AIRFLOW_UID:-50000}:${AIRFLOW_GID:-50000}"
   depends_on:
     &airflow-common-depends-on
-    airflow-broker:
+    redis:
       condition: service_healthy
-    airflow-db:
+    postgres:
       condition: service_healthy
   networks:
     - data-network
 
 services:
-  airflow-db:
+  postgres:
     image: postgres:13
-    container_name: airflow-db
+    container_name: postgres
     environment:
       POSTGRES_USER: airflow
       POSTGRES_PASSWORD: airflow
@@ -65,9 +64,9 @@ services:
     networks:
       - data-network
 
-  airflow-broker:
+  redis:
     image: redis:latest
-    container_name: airflow-broker
+    container_name: redis
     ports:
       - "6370:6379"
     healthcheck:
@@ -85,7 +84,7 @@ services:
     container_name: airflow-webserver
     command: webserver
     ports:
-      - "8080:8080"
+      - "8888:8080"
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
       interval: 30s
