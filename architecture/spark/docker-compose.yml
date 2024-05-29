@@ -1,7 +1,5 @@
 version: "3"
-services:
 
-## Spark Standalone ##
 x-spark-common:
   &spark-common
   env_file:
@@ -17,6 +15,8 @@ x-spark-common:
   networks:
     - data-network
 
+services:
+## Spark Standalone ##
   spark-master:
     <<: *spark-common
     build:
@@ -39,7 +39,6 @@ x-spark-common:
 
   spark-worker:
     <<: *spark-common
-    <<: *workspace-share
     image: spark-image
     command: bash -c "sbin/start-worker.sh spark://spark-master:7077"
     environment:
@@ -84,7 +83,6 @@ x-spark-common:
 
   spark-notebook:
     <<: *spark-common
-    <<: *workspace-share
     build:
       context: .
       dockerfile: ./jupyterlab.Dockerfile

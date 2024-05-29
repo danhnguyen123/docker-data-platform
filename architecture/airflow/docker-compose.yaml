@@ -36,9 +36,9 @@ x-airflow-common:
   user: "${AIRFLOW_UID:-50000}:${AIRFLOW_GID:-50000}"
   depends_on:
     &airflow-common-depends-on
-    redis:
+    airflow-broker:
       condition: service_healthy
-    postgres:
+    airflow-db:
       condition: service_healthy
   networks:
     - data-network
@@ -258,3 +258,7 @@ services:
 
 volumes:
   airflow-db:
+
+networks:
+  data-network:
+    external: true

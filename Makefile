@@ -2,16 +2,16 @@ init:
 	docker network create -d bridge data-network
 
 	cd ./architecture/minio
-	docker compose  up --build
+	docker compose  up --build -d
 	cd ../..
 
 	cd ./architecture/hive
-	docker compose up --build
+	docker compose up --build -d
 	cd ../..
 
 up-build-spark:
     cd ./architecture/spark
-	docker compose up -build -d --scale spark-worker=2
+	docker compose up --build -d --scale spark-worker=2
 	cd ../..
 
 up-build-airflow:

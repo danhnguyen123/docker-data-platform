@@ -20,7 +20,7 @@ services:
 
   hive-metastore:
     build:
-      context: ./architecture/hive
+      context: .
       dockerfile: Dockerfile
     image: hive-image
     container_name: hive-metastore
