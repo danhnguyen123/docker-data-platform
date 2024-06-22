@@ -31,6 +31,8 @@ services:
                    /usr/bin/mc rm -r --force myminio/rainforest;
                    /usr/bin/mc mb myminio/rainforest;
                    /usr/bin/mc policy download myminio/rainforest;
+                   /usr/bin/mc mb myminio/datalake;
+                   /usr/bin/mc policy download myminio/datalake;
                    exit 0; "
     networks:
       - data-network

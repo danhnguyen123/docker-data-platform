@@ -1,5 +1,4 @@
 version: "3"
-
 x-spark-common:
   &spark-common
   env_file:
@@ -31,10 +30,11 @@ services:
     ports:
       - 4040:4040
       - 7077:7077
-      - 8080:8080
+      - 8008:8080
     volumes:
       - spark-logs:/opt/spark/spark-events
       - ./conf/spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf
+      # - ./conf/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml
       - ../../workspace:/opt/workspace
 
   spark-worker:
@@ -64,7 +64,7 @@ services:
   spark-thrift-server:
     image: spark-image
     container_name: spark-thrift-server
-    profiles: ["spark-thrift-server"]
+    profiles: ["thrift"]
     volumes:
       - spark-logs:/opt/spark/spark-events
     ports:
@@ -88,7 +88,8 @@ services:
       dockerfile: ./jupyterlab.Dockerfile
     image: spark-notebook
     container_name: spark-notebook
-    command: jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root --NotebookApp.token=123 --NotebookApp.password=123
+    profiles: ["notebook"]
+    command: jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root --NotebookApp.token=admin --NotebookApp.password="$${JUPYTERLAB_PASSWORD}"
     volumes:
       - spark-logs:/opt/spark/spark-events
       - ./conf/spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf

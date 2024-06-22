@@ -1,0 +1,45 @@
+version: "3"
+x-hadoop-common:
+  &hadoop-common
+  env_file:
+      - ./conf/hadoop-config
+  networks:
+    - data-network
+
+services:
+  namenode:
+    <<: *hadoop-common
+    image: apache/hadoop:3
+    hostname: namenode
+    container_name: namenode
+    command: ["hdfs", "namenode"]
+    ports:
+      - 9870:9870
+    environment:
+        ENSURE_NAMENODE_DIR: "/tmp/hadoop-root/dfs/name"
+    volumes:
+      - ./data:/tmp/data
+
+  datanode:
+    <<: *hadoop-common
+    image: apache/hadoop:3
+    command: ["hdfs", "datanode"]
+   
+  resourcemanager:
+    <<: *hadoop-common
+    image: apache/hadoop:3
+    hostname: resourcemanager
+    container_name: resourcemanager
+    command: ["yarn", "resourcemanager"]
+    ports:
+      - 8088:8088
+
+  nodemanager:
+    <<: *hadoop-common
+    image: apache/hadoop:3
+    container_name: nodemanager
+    command: ["yarn", "nodemanager"]
+
+networks:
+  data-network:
+    external: true

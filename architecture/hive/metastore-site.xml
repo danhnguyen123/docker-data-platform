@@ -28,6 +28,7 @@
         <name>javax.jdo.option.ConnectionPassword</name>
         <value>password</value>
     </property>
+
     <property>
         <name>fs.s3a.access.key</name>
         <value>minio</value>

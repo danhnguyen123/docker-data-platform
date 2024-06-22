@@ -7,7 +7,7 @@ services:
     container_name: hue-server
     hostname: hue-server
     ports:
-      - 8800:8888
+      - 8000:8888
     volumes:
       - ./hue.ini:/usr/share/hue/desktop/conf/z-hue.ini
     depends_on:

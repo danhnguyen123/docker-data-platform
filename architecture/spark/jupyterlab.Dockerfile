@@ -20,4 +20,4 @@ RUN mkdir -p ${shared_workspace} && \
 # -- Runtime
 
 EXPOSE 8888
-WORKDIR ${shared_workspace}
+# WORKDIR ${shared_workspace}

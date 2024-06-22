@@ -7,9 +7,10 @@ services:
     container_name: trino
     hostname: trino
     ports:
-      - 8000:8080
+      - 8001:8080
     volumes:
       - ./catalog:/etc/trino/catalog
+      - ../keys/service-account-dev.json:/opt/keys/service-account-dev.json
     networks:
       - data-network
 

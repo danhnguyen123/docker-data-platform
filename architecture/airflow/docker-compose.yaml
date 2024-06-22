@@ -84,7 +84,7 @@ services:
     container_name: airflow-webserver
     command: webserver
     ports:
-      - "8888:8080"
+      - "8080:8080"
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
       interval: 30s
@@ -220,18 +220,18 @@ services:
     volumes:
       - ${AIRFLOW_PROJ_DIR:-.}:/sources
 
-  # airflow-cli:
-  #   <<: *airflow-common
-  #   profiles:
-  #     - debug
-  #   environment:
-  #     <<: *airflow-common-env
-  #     CONNECTION_CHECK_MAX_COUNT: "0"
-  #   # Workaround for entrypoint issue. See: https://github.com/apache/airflow/issues/16252
-  #   command:
-  #     - bash
-  #     - -c
-  #     - airflow
+  airflow-cli:
+    <<: *airflow-common
+    profiles:
+      - debug
+    environment:
+      <<: *airflow-common-env
+      CONNECTION_CHECK_MAX_COUNT: "0"
+    # Workaround for entrypoint issue. See: https://github.com/apache/airflow/issues/16252
+    command:
+      - bash
+      - -c
+      - airflow
 
   # You can enable flower by adding "--profile flower" option e.g. docker-compose --profile flower up
   # or by explicitly targeted on the command line e.g. docker-compose up flower.
